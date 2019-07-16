@@ -25,7 +25,8 @@ class MainHandler(tornado.web.RequestHandler):
             bucket=DEFAULT_BUCKET
         )
         logging.info('Processing %s s3 records' % len(s3_records))
-        s3_link_records_result = self.aws_job_manager.upload_records(s3_records)
+        processed_records = self.aws_job_manager.process_records(s3_records)
+        s3_link_records_result = self.aws_job_manager.upload_processed_records(processed_records)
         self.write(json.dumps({'s3_link_records_result': s3_link_records_result}))
 
 

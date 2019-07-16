@@ -1,7 +1,7 @@
 import logging
 
 from api.aws_api import AwsApi
-
+from api.s3_records import S3Records
 
 MAX_RECORD_FAILURES = 3
 
@@ -26,11 +26,23 @@ class AwsJobManager:
 
         :param filename:
         :param bucket_name:
+        :return: generator for records dataframe
+        """
+        return S3Records(filename=filename, bucket_name=bucket_name)
+
+    def process_records(self, records):
+        """
+        do some processing
+        :param records:
         :return:
         """
-        return (file_part for file_part in self.api.get_file(filename, bucket_name))
+        return (self.process_single_record(record) for record in records)
 
-    def upload_records(self, records):
+    def process_single_record(self, record_df):
+        record_df['test_col'] = 'test_process'
+        return record_df
+
+    def upload_processed_records(self, records):
         """
 
         :param records: generator for s3 Records

@@ -30,6 +30,11 @@ test_api:
 .PHONY: smoke
 smoke:
 	$(VERBOSE) nosetests ./
+.PHONY: setup
+setup:
+	$(VERBOSE) virtualenv -p python3 venv
+	$(VERBOSE) source venv/bin/activate
+	$(VERBOSE) pip install -r requirements.txt
 .PHONY: run
 run:
 	$(VERBOSE) source .bashrc

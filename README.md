@@ -1,9 +1,13 @@
 #Aws job manager
 
 ###commands:
+---------
 
-1.`make run` should init the application http://localhost:8888.
-2.`make smoke` runs entire tests.
+1.`make setup` install all package dependencies.
+2. should be .bashrc file to keep environment variables .
+3.`make run` should init the application http://localhost:8888.
+4.`make smoke` runs entire tests.
+--------
 
     Aws async job/tasks managing , handling responses
     

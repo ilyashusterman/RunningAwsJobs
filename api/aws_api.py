@@ -1,21 +1,24 @@
-import logging
+import os
 import subprocess
+import logging
 from contextlib import contextmanager
 
 import boto3
 import botocore
 
 from api.config import KINESIS_INPUT_STREAM
+from api.s3_file_part import FilePart
 
 
 class AwsApi:
+    """ shared object that could me asynchronously run in threads as declared via lock object """
+    s3_client = boto3.client('s3')
 
     def __init__(self):
         """
         Connects to aws with exported environment variables
         """
         self.kinesis_client = boto3.client('kinesis')
-        self.s3_client = boto3.client('s3')
 
     @contextmanager
     def upload_records(self, records, input_stream_name=KINESIS_INPUT_STREAM):
@@ -81,20 +84,33 @@ class AwsApi:
         else:
             logging.info("Succesfuly uploaded file: {} into bucket: {}".format(file_name, bucket))
 
-    def get_files(self, bucket_name):
+    def get_file_links(self, bucket_name):
         return self.s3_client.list_objects(Bucket=bucket_name)['Contents']
 
     def download_file_parts(self, bucket_name, filename):
         return self.s3_client.download_file_parts(bucket_name, filename)
 
-    def download_file_part(self, file_part):
-        #TODO
-        pass
-
-    def get_file(self, filename, bucket_name, part_size=64000):
+    def get_file_parts(self, filename, bucket_name, min_part_size=1):
         """
 
         :param filename:
         :param bucket_name:
         :return: Generator for file parts
         """
+        return (self.get_file_part(link, bucket_name) for link in self.get_file_links(bucket_name)
+                if self.is_link_valid(link, filename, min_part_size))
+
+    def is_link_valid(self, link, filename, min_part_size):
+        if link['Size'] < min_part_size:
+            return False
+        else:
+            return filename in link['Key']
+
+    def get_file_part(self, link, bucket_name):
+        filepart = FilePart.from_link(link)
+        self.download_link(bucket_name, filepart.s3_url, filepart.local_filename)
+        return filepart
+
+    def download_link(cls, bucket_name, key_path, filename):
+        return cls.s3_client.download_file(bucket_name,
+                                            key_path, os.path.join(os.curdir, filename))
