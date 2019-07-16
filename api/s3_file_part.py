@@ -1,12 +1,12 @@
 import os
-from dataclasses import dataclass
 
 
-@dataclass
 class FilePart:
-    s3_url: str
-    local_filename: str
-    size: str
+
+    def __init__(self, s3_url: str, local_filename: str, size: str):
+        self.s3_url = s3_url
+        self.local_filename = local_filename
+        self.size = size
 
     @classmethod
     def from_link(cls, link):
