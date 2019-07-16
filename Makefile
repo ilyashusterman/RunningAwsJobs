@@ -30,3 +30,7 @@ test_api:
 .PHONY: smoke
 smoke:
 	$(VERBOSE) nosetests ./
+.PHONY: run
+run:
+	$(VERBOSE) source .bashrc
+	$(VERBOSE) python3 server.py

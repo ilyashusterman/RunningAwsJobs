@@ -1,3 +1,10 @@
+#Aws job manager
+
+###commands:
+1.`make run` should init the application http://localhost:8888
+2. `make smoke` runs entire tests
+
+
     Aws async job/tasks managing , handling responses
     
     1. Create kineses stream AwsJobManager
