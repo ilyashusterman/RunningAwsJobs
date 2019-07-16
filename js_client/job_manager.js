@@ -8,7 +8,7 @@ class JobManager extends React.Component {
     super(props);
     this.state = {
         processing: false,
-        response_content: {},
+        initiated_job: false,
         result_link: '',
         time: null
     };
@@ -20,7 +20,8 @@ class JobManager extends React.Component {
           let response_content = response.json();
           self.setState({
               'result_link': response_content,
-              'processing': true
+              'processing': true,
+              'initiated_job': true
           })
         }
     );
@@ -46,11 +47,11 @@ class JobManager extends React.Component {
     if (this.state.processing) {
       return 'Processing...';
     }
-
+    const button_content = this.state.initiated_job? 'Launch Job link='+ this.state.result_link : 'Launch Job';
     return e(
       'button',
       { onClick: this.initializeJob.bind(this) },
-      'Launch Job link='+ this.state.result_link
+      button_content
     );
   }
 }

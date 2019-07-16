@@ -1,10 +1,8 @@
 import logging
-import uuid
+import subprocess
 from contextlib import contextmanager
 
 import boto3
-import subprocess
-
 import botocore
 
 from api.config import KINESIS_INPUT_STREAM
@@ -47,7 +45,7 @@ class AwsApi:
 
     def create_new_kinesis_steam(self, stream_num):
         """
-        running command
+        running cli command
         aws kinesis create-stream \
         --stream-name ExampleInputStream \
         --shard-count 1 \
@@ -55,11 +53,15 @@ class AwsApi:
         :return:
         """
         input_stream_name = 'input_stream_%s' % stream_num
-        subprocess.run(["aws", "kinesis", "create-stream",
-                        "--stream-name", input_stream_name,
-                        "--shard-count", "1"])
-        return input_stream_name
-
+        try:
+            subprocess.run(["aws", "kinesis", "create-stream",
+                            "--stream-name", input_stream_name,
+                            "--shard-count", "1"])
+        except Exception as e:
+            #TODO shoold rase create stream exception
+            raise Exception('Create Stream Exception')
+        else:
+            return input_stream_name
 
     def upload_file(self, file_path, file_name, bucket, folder):
         """
@@ -88,3 +90,11 @@ class AwsApi:
     def download_file_part(self, file_part):
         #TODO
         pass
+
+    def get_file(self, filename, bucket_name, part_size=64000):
+        """
+
+        :param filename:
+        :param bucket_name:
+        :return: Generator for file parts
+        """
