@@ -8,7 +8,9 @@ class JobManager extends React.Component {
     super(props);
     this.state = {
         processing: false,
-        response_content: {}
+        response_content: {},
+        result_link: '',
+        time: null
     };
   }
   initializeJob() {
@@ -16,18 +18,28 @@ class JobManager extends React.Component {
     let self = this;
     fetch('/api/process', {method:'POST'}).then(response => {
           let response_content = response.json();
-          self.setState({'response_content': response_content})
+          self.setState({
+              'result_link': response_content,
+              'processing': true
+          })
         }
     );
-    setInterval(this.setIntervalProcessCheck, 2000);
+    this.state.timer = setInterval(this.setIntervalProcessCheck.bind(this), 2000);
   }
   setIntervalProcessCheck() {
-  if(this.processing) {
-      clearInterval(timer);
+  let self = this;
+  if(!self.state.processing) {
+      clearInterval(this.state.timer);
       return;
     }
   else{
-      
+        fetch(self.state.result_link).then(response => {
+          if (response.ok){
+            self.setState({'processing': false,
+            })
+          }
+        }
+    );
     }
   }
   render() {
@@ -37,8 +49,8 @@ class JobManager extends React.Component {
 
     return e(
       'button',
-      { onClick: this.initializeJob },
-      'Launch Job'
+      { onClick: this.initializeJob.bind(this) },
+      'Launch Job link='+ this.state.result_link
     );
   }
 }

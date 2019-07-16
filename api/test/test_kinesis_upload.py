@@ -1,13 +1,12 @@
 from api.aws_api import AwsApi
-from api.test.RecordGenerator import RecordGenerator
+from api.test.record_generator import RecordGenerator
 
-kinesis = AwsApi().kinesis_client
+api = AwsApi()
 
 generator = RecordGenerator()
 batch_size = 10
 
 records = generator.get_records(batch_size)
-# print(records)
-response = kinesis.put_records(StreamName="ExampleInputStream", Records=records)
-assert response['ResponseMetadata']['HTTPStatusCode'] == 200
-print('Records was posted successfully')
+with api.upload_records(records=records) as response:
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    print(f'{len(records)} Records were posted successfully')
