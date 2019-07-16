@@ -1,16 +1,13 @@
-#Aws job manager
-
-###commands:
----------
-
-1.`make setup` install all package dependencies.
-2. should be .bashrc file to keep environment variables .
-3.`make run` should init the application http://localhost:8888.
-4.`make smoke` runs entire tests.
+Aws job manager
+----
+##### commands:
+    1.`make setup` install all package dependencies.
+    2. should be .bashrc file to keep environment variables .
+    3.`make run` should init the application http://localhost:8888.
+    4.`make smoke` runs entire tests.
 --------
 
-    Aws async job/tasks managing , handling responses
-    
+##### Aws async job/tasks managing , handling responses
     1. Create kineses stream AwsJobManager
     2. Once the stream is ready- checks if process didnt failed
     3.put some data into the stream - put records. 
