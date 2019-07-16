@@ -23,6 +23,10 @@ endif
 test:
 	$(VERBOSE) source .bashrc
 	$(VERBOSE) nosetests ./tests
+.PHONY: test_api
+test_api:
+	$(VERBOSE) source .bashrc
+	$(VERBOSE) nosetests api/test/test_aws_api.py
 .PHONY: smoke
 smoke:
 	$(VERBOSE) nosetests ./
